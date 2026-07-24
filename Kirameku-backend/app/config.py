@@ -16,10 +16,10 @@ CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost
 GITHUB_CLIENT_ID = os.environ.get("GITHUB_CLIENT_ID", "")
 GITHUB_CLIENT_SECRET = os.environ.get("GITHUB_CLIENT_SECRET", "")
 
-# 阿里云 OSS 配置
-OSS_ACCESS_KEY_ID = os.environ["OSS_ACCESS_KEY_ID"]
-OSS_ACCESS_KEY_SECRET = os.environ["OSS_ACCESS_KEY_SECRET"]
-OSS_BUCKET_NAME = os.environ["OSS_BUCKET_NAME"]
-OSS_ENDPOINT = os.environ["OSS_ENDPOINT"]
-OSS_CUSTOM_DOMAIN = os.environ["OSS_CUSTOM_DOMAIN"]
-OSS_PREFIX = os.environ["OSS_PREFIX"]
+# MinIO 对象存储配置
+MINIO_ENDPOINT = os.environ["MINIO_ENDPOINT"]
+MINIO_ACCESS_KEY = os.environ["MINIO_ACCESS_KEY"]
+MINIO_SECRET_KEY = os.environ["MINIO_SECRET_KEY"]
+MINIO_BUCKET = os.environ["MINIO_BUCKET"]
+MINIO_SECURE = os.getenv("MINIO_SECURE", "false").lower() == "true"
+MINIO_PUBLIC_URL = os.environ["MINIO_PUBLIC_URL"]

@@ -28,7 +28,7 @@
 | **管理后台** | Vue 3 + Vite 8 + Element Plus + Pinia (vue-pure-admin) | — | 纯静态 SPA，构建后由 FastAPI 托管 |
 | **后端 API** | FastAPI (Python 3.10+) + SQLModel + Uvicorn | 8000 | `uvicorn` 进程 |
 | **数据库** | MySQL 8.0+ | 3306 | 导入 `init_db.sql` |
-| **对象存储** | 阿里云 OSS | — | 后端直传 OSS |
+| **对象存储** | MinIO | 9000/9001 | 自托管，Docker Compose 一键启动 |
 
 ### 1.3 关键文件清单
 
@@ -61,7 +61,7 @@
 | 依赖 | 是否必需 | 说明 |
 |------|----------|------|
 | MySQL 8.0+ | ✅ **必需** | 主数据库，18 张业务表 |
-| 阿里云 OSS | ✅ **必需** | 图片/文件上传，`config.py` 中 OSS 变量为强制读取 |
+| MinIO | ✅ **必需** | 自托管对象存储，图片/文件上传 |
 | GitHub OAuth | ⚠️ 可选 | 访客评论/留言登录，不配则无法评论 |
 | Redis | ❌ 不需要 | 项目未使用 |
 | Node.js 20+ | ✅ **必需** | 前端 + 管理后台构建和运行 |
@@ -125,7 +125,24 @@ SELECT username, nickname, is_admin FROM `user`;
 
 默认管理员账号：`admin` / `admin123`
 
-### 3.2 后端部署 (FastAPI)
+### 3.2 MinIO 对象存储部署
+
+```bash
+# 在项目根目录（有 docker-compose.yml 的位置）
+cd /www/wwwroot/your-project
+
+# 启动 MinIO
+docker compose up -d minio
+
+# 验证
+curl http://127.0.0.1:9000/minio/health/live
+```
+
+MinIO 管理控制台：`http://你的服务器IP:9001`（默认账号 `minioadmin` / `minioadmin`）
+
+启动后程序会自动创建 `kirameku` bucket 并设为公开读。
+
+### 3.3 后端部署 (FastAPI)
 
 ```bash
 # 1. 进入后端目录
@@ -160,13 +177,13 @@ SECRET_KEY=你随机生成的长字符串
 # CORS 允许的前端域名
 CORS_ORIGINS=https://你的域名,http://localhost:3000,http://localhost:5173
 
-# ========== 必填（阿里云 OSS）==========
-OSS_ACCESS_KEY_ID=你的阿里云AccessKey
-OSS_ACCESS_KEY_SECRET=你的阿里云AccessKeySecret
-OSS_BUCKET_NAME=你的Bucket名称
-OSS_ENDPOINT=oss-cn-beijing.aliyuncs.com
-OSS_CUSTOM_DOMAIN=https://你的Bucket自定义域名
-OSS_PREFIX=Boke/
+# ========== 必填（MinIO 对象存储）==========
+MINIO_ENDPOINT=127.0.0.1:9000
+MINIO_ACCESS_KEY=minioadmin
+MINIO_SECRET_KEY=minioadmin
+MINIO_BUCKET=kirameku
+MINIO_SECURE=false
+MINIO_PUBLIC_URL=http://你的域名:9000/kirameku
 
 # ========== 可选（GitHub OAuth 评论登录）==========
 GITHUB_CLIENT_ID=
@@ -215,7 +232,7 @@ sudo supervisorctl tail -f kirameku-backend
 - `--workers 2`：1.8GB 内存建议 2 worker，内存充足可设 `cores × 1`
 - `app.main:app`：FastAPI 应用入口路径
 
-### 3.3 管理后台构建 (Vue Admin)
+### 3.4 管理后台构建 (Vue Admin)
 
 ```bash
 cd /www/wwwroot/your-project/Kirameku-backend/admin
@@ -243,7 +260,7 @@ mv dist build
 # })
 ```
 
-### 3.4 前端博客构建与运行 (Next.js)
+### 3.5 前端博客构建与运行 (Next.js)
 
 ```bash
 cd /www/wwwroot/your-project/Kirameku
@@ -294,7 +311,7 @@ sudo supervisorctl update
 sudo supervisorctl start kirameku-frontend
 ```
 
-### 3.5 宝塔面板 Nginx 配置
+### 3.6 宝塔面板 Nginx 配置
 
 在宝塔面板 → 网站 → 对应站点 → 配置文件：
 
@@ -385,7 +402,7 @@ nginx -t          # 检查配置语法
 nginx -s reload   # 重载
 ```
 
-### 3.6 验证部署
+### 3.7 验证部署
 
 ```bash
 # 1. 后端健康检查
@@ -417,6 +434,7 @@ curl -s https://你的域名/ | grep buildId
 |------|----------|------|------|
 | Nginx | 宝塔面板 | 80/443 | 系统服务 |
 | MySQL | 宝塔面板 | 3306 | 系统服务 |
+| MinIO | Docker Compose | 9000/9001 | `docker compose up -d minio` |
 | Next.js | Supervisor | 3000 | `next start` |
 | FastAPI | Supervisor | 8000 | `uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 2` |
 
@@ -485,7 +503,7 @@ curl -s https://你的域名/ | grep buildId
 |---|------|------|------|
 | 1 | `requirements.txt` 缺少 `python-dotenv` | 启动报错 `ModuleNotFoundError` | `pip install python-dotenv` |
 | 2 | 管理后台构建输出 `dist/` 但 `main.py` 找 `build/` | 后台页面 404 | 创建软链接 `ln -s dist build` |
-| 3 | OSS 配置为强制读取 | OSS 不配则启动失败 | 必须配好阿里云 OSS |
+| 3 | MinIO 未启动 | 上传图片失败 | 确保 docker-compose 中 minio 容器运行中 |
 | 4 | Nginx 缓存旧 HTML | 部署后页面白屏/Mixed Content 错误 | `proxy_cache off` + `proxy_no_cache 1` |
 | 5 | 1.8GB 内存不足 | Next.js build 时 OOM | `NODE_OPTIONS="--max-old-space-size=512"` |
 
@@ -493,7 +511,7 @@ curl -s https://你的域名/ | grep buildId
 
 1. **数据库密码**：不要用默认密码，使用强随机密码
 2. **SECRET_KEY**：`openssl rand -hex 32` 生成
-3. **OSS AccessKey**：使用 RAM 子账号，只授权 OSS 读写权限，不要用主账号
+3. **MinIO AccessKey**：生产环境务必修改默认的 `minioadmin/minioadmin` 账号密码
 4. **FastAPI**：只监听 `127.0.0.1`，不暴露公网端口
 5. **防火墙**：只开放 80/443/22 端口，关闭 3000/8000/3306 公网访问
 6. **管理后台**：`/admin` 路径建议加 Nginx Basic Auth 或 VPN 限制

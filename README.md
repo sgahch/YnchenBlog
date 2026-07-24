@@ -78,7 +78,7 @@
 - **FastAPI** — 高性能 Python Web 框架
 - **SQLModel** — ORM（SQLAlchemy + Pydantic）
 - **MySQL 8.0** — 关系型数据库
-- **阿里云 OSS** — 图片对象存储
+- **MinIO** — 自托管对象存储
 - **JWT** — 身份认证
 
 </td>
@@ -124,7 +124,7 @@
 
 ### 管理后台
 
-文章、分类、标签、评论、留言、说说、相册、项目、友链、收藏夹、站点配置 — 全部可视化管理，支持图片压缩上传至阿里云 OSS。
+文章、分类、标签、评论、留言、说说、相册、项目、友链、收藏夹、站点配置 — 全部可视化管理，支持图片上传至 MinIO 对象存储。
 
 ## 快速开始
 
@@ -143,7 +143,7 @@ pip install -r requirements.txt
 
 # 配置环境变量
 cp .env.example .env
-# 编辑 .env，填入数据库、密钥、OSS 等配置
+# 编辑 .env，填入数据库、密钥、MinIO 等配置
 
 # 初始化数据库（MySQL 8.0+）
 mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS kirameku DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
@@ -192,13 +192,13 @@ DATABASE_URL=mysql+pymysql://root:password@127.0.0.1:3306/kirameku?charset=utf8m
 # JWT
 SECRET_KEY=your-secret-key
 
-# 阿里云 OSS
-OSS_ACCESS_KEY_ID=your-access-key-id
-OSS_ACCESS_KEY_SECRET=your-access-key-secret
-OSS_BUCKET_NAME=your-bucket-name
-OSS_ENDPOINT=oss-cn-beijing.aliyuncs.com
-OSS_CUSTOM_DOMAIN=https://your-custom-domain.com
-OSS_PREFIX=Boke/
+# MinIO 对象存储
+MINIO_ENDPOINT=127.0.0.1:9000
+MINIO_ACCESS_KEY=minioadmin
+MINIO_SECRET_KEY=minioadmin
+MINIO_BUCKET=kirameku
+MINIO_SECURE=false
+MINIO_PUBLIC_URL=http://127.0.0.1:9000/kirameku
 
 # GitHub OAuth（可选，用于评论/留言登录）
 GITHUB_CLIENT_ID=
