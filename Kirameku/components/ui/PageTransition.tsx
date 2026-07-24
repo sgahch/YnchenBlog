@@ -7,9 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 const tips = [
   "按住 Tab 可以呼出快捷导航菜单",
   "试试看 Konami Code：↑↑↓↓←→←→520",
-  "在小说页面可以自定义阅读设置",
   "点击页面空白处可以关闭弹窗",
-  "拖拽书架上的书籍可以排序",
 ];
 
 export default function PageTransition() {

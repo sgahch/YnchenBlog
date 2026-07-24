@@ -28,10 +28,11 @@ export const siteConfig = {
   // 照片墙预览图
   photoWallImage: "/images/photo-wall.jpg",
 
-  // 云音乐配置（网易云音乐）
-  // 填歌单 ID 则自动拉取整个歌单，填歌曲 ID 列表则只播放指定歌曲
-  cloudMusicPlaylistId: "17943739323",  // 歌单 ID（优先）
-  cloudMusicIds: [],                     // 歌曲 ID 列表（歌单为空时使用）
+  // 云音乐配置（网易云音乐）— 仅作为回退默认值
+  // 实际配置已迁移到管理后台 → 站点配置 → cloud_music_playlist_id / cloud_music_ids
+  // 后端 API 不可用时才会使用以下值
+  cloudMusicPlaylistId: "17943739323",  // 歌单 ID（回退默认值）
+  cloudMusicIds: [],                     // 歌曲 ID 列表（回退默认值）
 
   // 后端 API 地址（留空，开发通过 next.config.ts rewrites 代理，生产通过 Nginx 反代）
   apiBaseUrl: "",

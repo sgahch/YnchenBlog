@@ -133,7 +133,7 @@ export default function MusicPage() {
       <div className="max-w-4xl mx-auto px-4 py-6 md:py-12">
         <MusicCard>
           <div className="flex items-center justify-center h-40 md:h-64">
-            <div className="text-sm md:text-base text-slate-600 dark:text-slate-300 font-medium">暂无音乐，请在 siteConfig 中配置 cloudMusicIds</div>
+            <div className="text-sm md:text-base text-slate-600 dark:text-slate-300 font-medium">暂无音乐，请在管理后台 → 站点配置中设置 cloud_music_playlist_id（网易云歌单ID）</div>
           </div>
         </MusicCard>
       </div>

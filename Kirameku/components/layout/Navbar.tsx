@@ -23,7 +23,6 @@ import {
   Menu,
   X,
   Settings,
-  Library,
   Bookmark,
 } from "lucide-react";
 
@@ -32,7 +31,6 @@ const navLinks = [
   { href: "/posts", label: "文章", icon: BookOpen },
   { href: "/moments", label: "说说", icon: MessageSquare },
   { href: "/messages", label: "留言", icon: Newspaper },
-  { href: "/novel", label: "小说", icon: Library },
   { href: "/bookmark", label: "收藏夹", icon: Bookmark },
   { href: "/projects", label: "项目", icon: FolderGit2 },
   { href: "/friends", label: "友链", icon: Users },

@@ -1,8 +1,8 @@
 # Ynchen. ~ 数据库设计文档
 
-> 数据库：PostgreSQL 14+
+> 数据库：MySQL 8.0+
 > 建表脚本：`init_db.sql`
-> 执行方式：`psql -U postgres -d kirameku -f init_db.sql`
+> 执行方式：`mysql -u root -p kirameku < init_db.sql`
 
 ## 概览
 

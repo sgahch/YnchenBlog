@@ -37,7 +37,6 @@
 .
 ├── Kirameku/                      # 前端（Next.js App Router）
 │   ├── app/                       # 页面路由
-│   │   ├── novel/                 # 小说阅读系统（书架 → 搜索 → 目录 → 阅读）
 │   │   ├── bookmark/              # 收藏夹（站点导航）
 │   │   ├── posts/                 # 文章系统
 │   │   ├── moments/               # 说说
@@ -95,10 +94,10 @@
 </td>
 <td width="50%" valign="top">
 
-**阅读服务**
-- **reader-master** — Kotlin/Spring Boot
-- legado 书源兼容
-- 独立部署，端口 8085
+**部署运维**
+- Nginx 反向代理
+- Supervisor 进程管理
+- 宝塔面板 + MySQL 8.0
 
 </td>
 </tr>
@@ -114,7 +113,7 @@
 | 文章 | `/posts` | 分类筛选、标签、Markdown 渲染、代码高亮 |
 | 说说 | `/moments` | 碎片化记录，类朋友圈时间线 |
 | 杂谈 | `/messages` | 轻量话题讨论区 |
-| 小说 | `/novel` | 书架 → 搜索 → 目录 → 阅读，完整阅读体验 |
+
 | 收藏夹 | `/bookmark` | 站点导航，分类管理，平台标签，自动获取 favicon |
 | 项目 | `/projects` | 个人项目展示，支持搜索，GitHub/Gitee 链接 |
 | 友链 | `/friends` | 漂流瓶主题，可拖动交互 |
@@ -174,9 +173,6 @@ pnpm build && pnpm start
 ### 3. 阅读服务（可选）
 
 ```bash
-# reader-master 独立部署
-java -jar reader-master.jar
-# 默认端口 8085，前端通过 /reader3/ 路径代理访问
 ```
 
 ## 环境变量
@@ -201,7 +197,6 @@ OSS_BUCKET=your-bucket-name
 
 - **Glassmorphism 风格** — 全站毛玻璃质感，亮色暗色双主题
 - **微交互动画** — Framer Motion 驱动，页面过渡、卡片悬停、果冻弹跳
-- **小说阅读系统** — 四级路由架构（书架/搜索/目录/阅读），SSE 流式搜索，阅读设置持久化
 - **收藏夹** — 自动获取站点 favicon，平台标签，搜索过滤
 - **漂流瓶友链** — 可拖动的漂浮瓶子，点击查看详情
 - **时间河流** — 归档页的可视化时间线，拖动交互
