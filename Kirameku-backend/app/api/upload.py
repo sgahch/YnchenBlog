@@ -32,21 +32,23 @@ def _get_client() -> Minio:
 
 def _ensure_bucket(client: Minio):
     """确保 bucket 存在且为公开可读。"""
-    if not client.bucket_exists(MINIO_BUCKET):
+    found = client.bucket_exists(MINIO_BUCKET)
+    if not found:
         client.make_bucket(MINIO_BUCKET)
-        # 设置 bucket 为公开读
-        policy = {
-            "Version": "2012-10-17",
-            "Statement": [
-                {
-                    "Effect": "Allow",
-                    "Principal": {"AWS": ["*"]},
-                    "Action": ["s3:GetObject"],
-                    "Resource": [f"arn:aws:s3:::{MINIO_BUCKET}/*"],
-                }
-            ],
-        }
-        client.set_bucket_policy(MINIO_BUCKET, policy)
+
+    # 无论 bucket 是否已存在，始终确保公开读策略
+    policy = {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Principal": {"AWS": ["*"]},
+                "Action": ["s3:GetObject"],
+                "Resource": [f"arn:aws:s3:::{MINIO_BUCKET}/*"],
+            }
+        ],
+    }
+    client.set_bucket_policy(MINIO_BUCKET, policy)
 
 
 @router.post("/image")
