@@ -10,7 +10,7 @@
 ![React](https://img.shields.io/badge/React-19-61dafb?logo=react)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi)
 ![Vue 3](https://img.shields.io/badge/Vue-3-42b883?logo=vue.js)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?logo=postgresql)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?logo=mysql)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-06b6d4?logo=tailwindcss)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript)
 ![License](https://img.shields.io/badge/License-MIT-blue)
@@ -77,7 +77,7 @@
 **后端**
 - **FastAPI** — 高性能 Python Web 框架
 - **SQLModel** — ORM（SQLAlchemy + Pydantic）
-- **PostgreSQL** — 关系型数据库
+- **MySQL 8.0** — 关系型数据库
 - **阿里云 OSS** — 图片对象存储
 - **JWT** — 身份认证
 
@@ -119,7 +119,7 @@
 | 友链 | `/friends` | 漂流瓶主题，可拖动交互 |
 | 照片墙 | `/photowall` | 相册瀑布流展示 |
 | 归档 | `/timeline` | 时间河流可视化，拖动浏览全部文章 |
-| 音乐 | `/music` | 云音乐播放器，支持歌单 |
+| 音乐 | `/music` | 网易云音乐播放器，歌单 ID 通过管理后台实时切换 |
 | 关于 | `/about` | 关于博主 |
 
 ### 管理后台
@@ -145,11 +145,16 @@ pip install -r requirements.txt
 cp .env.example .env
 # 编辑 .env，填入数据库、密钥、OSS 等配置
 
-# 初始化数据库
-psql -U postgres -d your_db -f init_db.sql
+# 初始化数据库（MySQL 8.0+）
+mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS kirameku DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+mysql -u root -p kirameku < init_db.sql
 
 # 打包管理后台
 cd admin && pnpm install && pnpm build && cd ..
+
+# 链接管理后台静态文件（admin 构建输出 dist/，但 main.py 读取 build/）
+ln -s admin/dist admin/build  # Linux/Mac
+# mklink /J admin\build admin\dist  # Windows
 
 # 启动
 uvicorn app.main:app --host 0.0.0.0 --port 8000
@@ -157,6 +162,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 API 文档：`http://localhost:8000/docs`
 管理后台：`http://localhost:8000/admin`
+默认管理员：`admin` / `admin123`
 
 ### 2. 前端
 
@@ -170,18 +176,18 @@ pnpm dev                          # 开发模式 → http://localhost:3000
 pnpm build && pnpm start
 ```
 
-### 3. 阅读服务（可选）
+### 3. 生产部署
 
-```bash
-```
+详见 [DEPLOY_GUIDE.md](DEPLOY_GUIDE.md)，包含 Nginx 配置、Supervisor 进程管理、宝塔面板部署等完整步骤。
+数据库迁移（PostgreSQL → MySQL）分析见 [DB_MIGRATION_ANALYSIS.md](DB_MIGRATION_ANALYSIS.md)。
 
 ## 环境变量
 
 `Kirameku-backend/.env`（后端环境变量）：
 
 ```env
-# 数据库
-DATABASE_URL=postgresql://user:password@host:5432/dbname
+# 数据库 (MySQL 8.0+)
+DATABASE_URL=mysql+pymysql://root:password@127.0.0.1:3306/kirameku?charset=utf8mb4
 
 # JWT
 SECRET_KEY=your-secret-key
@@ -189,8 +195,14 @@ SECRET_KEY=your-secret-key
 # 阿里云 OSS
 OSS_ACCESS_KEY_ID=your-access-key-id
 OSS_ACCESS_KEY_SECRET=your-access-key-secret
-OSS_ENDPOINT=oss-cn-xxx.aliyuncs.com
-OSS_BUCKET=your-bucket-name
+OSS_BUCKET_NAME=your-bucket-name
+OSS_ENDPOINT=oss-cn-beijing.aliyuncs.com
+OSS_CUSTOM_DOMAIN=https://your-custom-domain.com
+OSS_PREFIX=Boke/
+
+# GitHub OAuth（可选，用于评论/留言登录）
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
 ```
 
 ## 设计亮点
