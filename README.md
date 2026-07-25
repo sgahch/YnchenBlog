@@ -157,11 +157,11 @@ ln -s admin/dist admin/build  # Linux/Mac
 # mklink /J admin\build admin\dist  # Windows
 
 # 启动
-uvicorn app.main:app --host 0.0.0.0 --port 6666
+uvicorn app.main:app --host 0.0.0.0 --port 6789
 ```
 
-API 文档：`http://localhost:6666/docs`
-管理后台：`http://localhost:6666/admin`
+API 文档：`http://localhost:6789/docs`
+管理后台：`http://localhost:6789/admin`
 默认管理员：`admin` / `admin123`
 
 ### 2. 前端

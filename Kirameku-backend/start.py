@@ -4,7 +4,7 @@ import sys
 import webbrowser
 import uvicorn
 
-PORT = 6666
+PORT = 6789
 
 
 def main():
