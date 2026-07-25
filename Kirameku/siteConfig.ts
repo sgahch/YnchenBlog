@@ -3,7 +3,7 @@
 export const siteConfig = {
   // 网站标题与博主信息
   title: "Ynchen. ~の小站",
-  url: "https://boke.hiromu.top",
+  url: "https://hq-ynchen.xyz",
   authorName: "Ynchen. ~",
   bio: "项目开源在 GitHub,点击下面的GitHub图标跳转,欢迎 star 和 fork！(◕‿◕)",
 
@@ -39,16 +39,16 @@ export const siteConfig = {
 
   // 社交链接
   social: {
-    github: "https://github.com/Ynchen/ynchen-blog",
+    github: "https://github.com/sgahch/YnchenBlog",
     gitee: "https://gitee.com/hongzyh",
     google: "mailto:guh982719@gmail.com",
-    email: "your.email@example.com",
-    qq: "123456789",
-    wechat: "your_wechat_id",
+    email: "1911779729@qq.com",
+    qq: "1911779729",
+    wechat: "hq1911779729",
   },
 
   // 站点信息
-  buildDate: "2026-05-07T12:00:00",
+  buildDate: "2025-05-07T12:00:00",
   footerBadges: [
     { name: "Next.js 15", color: "text-sky-500" },
     { name: "React 19", color: "text-cyan-400" },
