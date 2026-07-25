@@ -5,7 +5,7 @@ import type { PostItem } from "@/app/api/posts";
 
 export const revalidate = 3600;
 
-const BACKEND_URL = "http://127.0.0.1:8000";
+const BACKEND_URL = "http://127.0.0.1:6666";
 
 const FEED_AUTHOR = `guh982719@gmail.com (${siteConfig.authorName})`;
 

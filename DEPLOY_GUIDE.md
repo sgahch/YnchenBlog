@@ -12,8 +12,8 @@
       ▼
 ┌─ Nginx (宝塔面板) ─────────────────────────────────────┐
 │                                                          │
-│  /api/*      → http://127.0.0.1:8000/api/*   (FastAPI) │
-│  /uploads/*  → http://127.0.0.1:8000/uploads/* (FastAPI)│
+│  /api/*      → http://127.0.0.1:6666/api/*   (FastAPI) │
+│  /uploads/*  → http://127.0.0.1:6666/uploads/* (FastAPI)│
 │  /admin/*    → FastAPI 内置静态文件服务                    │
 │  /*          → http://127.0.0.1:3000           (Next.js)│
 │                                                          │
@@ -26,7 +26,7 @@
 |------|--------|------|----------|
 | **前端博客** | Next.js 16 + React 19 + TypeScript + Tailwind CSS 4 | 3000 | `next start` (SSR 模式，非静态导出) |
 | **管理后台** | Vue 3 + Vite 8 + Element Plus + Pinia (vue-pure-admin) | — | 纯静态 SPA，构建后由 FastAPI 托管 |
-| **后端 API** | FastAPI (Python 3.10+) + SQLModel + Uvicorn | 8000 | `uvicorn` 进程 |
+| **后端 API** | FastAPI (Python 3.10+) + SQLModel + Uvicorn | 6666 | `uvicorn` 进程 |
 | **数据库** | MySQL 8.0+ | 3306 | 导入 `init_db.sql` |
 | **对象存储** | MinIO | 9000/9001 | 自托管，Docker Compose 一键启动 |
 
@@ -76,7 +76,7 @@
 apiBaseUrl: "",
 
 // ❌ 错误：绝对不能写死后端地址
-// apiBaseUrl: "http://8.138.17.253:8000"
+// apiBaseUrl: "http://8.138.17.253:6666"
 ```
 
 **2) `Kirameku-backend/app/config.py` 第 12 行 — CORS 域名确认：**
@@ -204,7 +204,7 @@ sudo apt install supervisor -y
 ```ini
 [program:kirameku-backend]
 directory=/www/wwwroot/your-project/Kirameku-backend
-command=/www/wwwroot/your-project/Kirameku-backend/venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 2
+command=/www/wwwroot/your-project/Kirameku-backend/venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 6666 --workers 2
 user=www
 autostart=true
 autorestart=true
@@ -332,10 +332,10 @@ server {
     ssl_certificate     /www/server/panel/vhost/cert/你的域名/fullchain.pem;
     ssl_certificate_key /www/server/panel/vhost/cert/你的域名/privkey.pem;
 
-    # ========== API 反代 → FastAPI (8000) ==========
+    # ========== API 反代 → FastAPI (6666) ==========
     # 这些 location 必须在 / 之前，匹配优先级更高
     location /api/ {
-        proxy_pass http://127.0.0.1:8000;
+        proxy_pass http://127.0.0.1:6666;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -349,14 +349,14 @@ server {
     }
 
     location /uploads/ {
-        proxy_pass http://127.0.0.1:8000;
+        proxy_pass http://127.0.0.1:6666;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         client_max_body_size 100m;
     }
 
     location /admin/ {
-        proxy_pass http://127.0.0.1:8000;
+        proxy_pass http://127.0.0.1:6666;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -406,11 +406,11 @@ nginx -s reload   # 重载
 
 ```bash
 # 1. 后端健康检查
-curl http://127.0.0.1:8000/api/health
+curl http://127.0.0.1:6666/api/health
 # 预期输出: {"status":"ok"}
 
 # 2. API 接口
-curl http://127.0.0.1:8000/api/posts/count?status=published
+curl http://127.0.0.1:6666/api/posts/count?status=published
 
 # 3. 前端
 curl -s http://127.0.0.1:3000 | head -20
@@ -436,7 +436,7 @@ curl -s https://你的域名/ | grep buildId
 | MySQL | 宝塔面板 | 3306 | 系统服务 |
 | MinIO | Docker Compose | 9000/9001 | `docker compose up -d minio` |
 | Next.js | Supervisor | 3000 | `next start` |
-| FastAPI | Supervisor | 8000 | `uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 2` |
+| FastAPI | Supervisor | 6666 | `uvicorn app.main:app --host 127.0.0.1 --port 6666 --workers 2` |
 
 常用运维命令：
 ```bash
@@ -513,5 +513,5 @@ curl -s https://你的域名/ | grep buildId
 2. **SECRET_KEY**：`openssl rand -hex 32` 生成
 3. **MinIO AccessKey**：生产环境务必修改默认的 `minioadmin/minioadmin` 账号密码
 4. **FastAPI**：只监听 `127.0.0.1`，不暴露公网端口
-5. **防火墙**：只开放 80/443/22 端口，关闭 3000/8000/3306 公网访问
+5. **防火墙**：只开放 80/443/22 端口，关闭 3000/6666/3306 公网访问
 6. **管理后台**：`/admin` 路径建议加 Nginx Basic Auth 或 VPN 限制

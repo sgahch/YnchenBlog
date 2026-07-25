@@ -1,6 +1,6 @@
 import HomeClient from "./HomeClient";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:6666";
 
 async function fetchProfileData() {
   try {
