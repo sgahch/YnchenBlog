@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import SearchBar from "@/components/ui/SearchBar";
 import ProfileCard from "@/components/home/ProfileCard";
@@ -13,15 +14,39 @@ const PhotoWallPreview = dynamic(() => import("@/components/home/PhotoWallPrevie
 const DogDiary = dynamic(() => import("@/components/home/DogDiary"), { ssr: false });
 const SiteDashboard = dynamic(() => import("@/components/widgets/SiteDashboard"), { ssr: false });
 
-export default function HomeClient({
-  postCount,
-  chatterCount,
-  photoCount,
-}: {
-  postCount: number;
-  chatterCount: number;
-  photoCount: number;
-}) {
+const API = process.env.NEXT_PUBLIC_API_URL || "";
+
+export default function HomeClient() {
+  const [counts, setCounts] = useState({ postCount: 0, chatterCount: 0, photoCount: 0 });
+
+  useEffect(() => {
+    let cancelled = false;
+    async function fetchCounts() {
+      try {
+        const [postsRes, chattersRes, albums] = await Promise.all([
+          fetch(`${API}/api/posts/count?status=published`).then((r) => r.json()),
+          fetch(`${API}/api/chatters/count?status=published`).then((r) => r.json()),
+          fetch(`${API}/api/albums`).then((r) => r.json()),
+        ]);
+        if (!cancelled) {
+          setCounts({
+            postCount: postsRes.count ?? 0,
+            chatterCount: chattersRes.count ?? 0,
+            photoCount: Array.isArray(albums)
+              ? albums.reduce((acc: number, a: { photo_count?: number }) => acc + (a.photo_count ?? 0), 0)
+              : 0,
+          });
+        }
+      } catch {
+        // 静默失败，使用默认值 0
+      }
+    }
+    fetchCounts();
+    return () => { cancelled = true; };
+  }, []);
+
+  const { postCount, chatterCount, photoCount } = counts;
+
   return (
     <div className="w-full max-w-6xl mx-auto py-6 md:py-12 px-4 sm:px-10 relative z-10">
       {/* 搜索栏 */}

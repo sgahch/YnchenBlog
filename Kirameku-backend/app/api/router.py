@@ -18,6 +18,9 @@ from app.api.upload import router as upload_router
 from app.api.bookmarks import router as bookmarks_router
 from app.api.visitors import router as visitors_router
 from app.api.dashboard import router as dashboard_router
+from app.api.music import router as music_router
+from app.api.uapis import router as uapis_router
+from app.api.feed import router as feed_router
 
 api_router = APIRouter()
 
@@ -37,3 +40,6 @@ api_router.include_router(upload_router)
 api_router.include_router(bookmarks_router)
 api_router.include_router(visitors_router)
 api_router.include_router(dashboard_router)
+api_router.include_router(music_router)
+api_router.include_router(uapis_router)
+api_router.include_router(feed_router)

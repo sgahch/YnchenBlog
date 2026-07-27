@@ -1,8 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // 静态导出模式 — 生成 out/ 目录，类似 Vue 的 dist/
+  output: "export",
+
   compress: true,
 
+  // rewrites 仅 dev 模式生效；生产环境由 Nginx 处理反代
   async rewrites() {
     return [
       {
@@ -23,15 +27,9 @@ const nextConfig: NextConfig = {
     ],
   },
 
+  // 静态导出下远程图片无法服务端优化，统一关闭
   images: {
-    formats: ["image/avif", "image/webp"],
-    remotePatterns: [
-      { protocol: "https", hostname: "static.hiromu.top" },
-      { protocol: "https", hostname: "hiromu520.oss-cn-beijing.aliyuncs.com" },
-      { protocol: "https", hostname: "picsum.photos" },
-      { protocol: "https", hostname: "avatars.githubusercontent.com" },
-      { protocol: "http", hostname: "8.148.31.90" },
-    ],
+    unoptimized: true,
   },
 };
 
